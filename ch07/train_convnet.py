@@ -17,8 +17,8 @@ x_test, t_test = x_test[:1000], t_test[:1000]
 max_epochs = 20
 
 network = SimpleConvNet(input_dim=(3,32,32),
-                        conv_param = {'filter_num': 30, 'filter_size': 5, 'pad': 0, 'stride': 1},
-                        hidden_size=100, output_size=10, weight_init_std=0.01)
+                        conv_param = {'filter_num': (32, 32, 32), 'filter_size': 3, 'pad': 1, 'stride': 1},
+                        hidden_size=256, output_size=10, weight_init_std=0.01)
                         
 trainer = Trainer(network, x_train, t_train, x_test, t_test,
                   epochs=max_epochs, mini_batch_size=100,

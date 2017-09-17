@@ -2,14 +2,17 @@
 
 [オリジナルのGit](https://github.com/oreilly-japan/deep-learning-from-scratch/)  
 7章のCNNを育てていきます。
-1. BatichNormalization 追加
-2. CIFAR-10 環境追加  
+1. BatichNormalization 追加 [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/8e9f72143e1595a0774e939904e8c84caf0a41bf)
+2. CIFAR-10 環境追加 [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/3a90601683b92c5ad4bfe9ac227884183ea11b08)  
 データの準備は↓
   - [ここ](https://www.cs.toronto.edu/~kriz/cifar.html)から CIFAR-10 binary version (suitable for C programs) をダウンロード
   - データを解いて ```$ tar xvzf cifar-10-binary.tar.gz```
   - データをまとめて ```$ cat cifar-10-batches-bin/data_batch_* > cifar10-train```
   - 圧縮 ```$ gzip cifar10-train```
   - test用のデータ(cifar10-test.gz)も同様にね
+3. 畳み込み層2層追加
+  - 畳み込み層のチャンネル数を32に全結合層のニューロン数を256に増やす
+  - カーネルサイズは3に減らす
 
 オリジナルのREADMEはここから↓
 
