@@ -1,6 +1,9 @@
 # コピーしてきて勉強中
 
 [オリジナルのGit](https://github.com/oreilly-japan/deep-learning-from-scratch/)  
+7章のCNNを育てていきます。  
+まずはBatichNormalizationを追加。
+
 オリジナルのREADMEはここから↓
 
 ---
