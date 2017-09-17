@@ -1,8 +1,15 @@
-# コピーしてきて勉強中
+# ゼロから作る Deep Learning をコピーしてきて勉強中
 
 [オリジナルのGit](https://github.com/oreilly-japan/deep-learning-from-scratch/)  
-7章のCNNを育てていきます。  
-まずはBatichNormalizationを追加。
+7章のCNNを育てていきます。
+1. BatichNormalization 追加
+2. CIFAR-10 環境追加  
+データの準備は↓
+  - [ここ](https://www.cs.toronto.edu/~kriz/cifar.html)から CIFAR-10 binary version (suitable for C programs) をダウンロード
+  - データを解いて ```$ tar xvzf cifar-10-binary.tar.gz```
+  - データをまとめて ```$ cat cifar-10-batches-bin/data_batch_* > cifar10-train```
+  - 圧縮 ```$ gzip cifar10-train```
+  - test用のデータ(cifar10-test.gz)も同様にね
 
 オリジナルのREADMEはここから↓
 

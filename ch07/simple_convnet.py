@@ -11,7 +11,7 @@ from common.gradient import numerical_gradient
 class SimpleConvNet:
     """単純なConvNet
     """
-    def __init__(self, input_dim=(1, 28, 28), 
+    def __init__(self, input_dim=(3, 32, 32),
                  conv_param={'filter_num':30, 'filter_size':5, 'pad':0, 'stride':1},
                  hidden_size=100, output_size=10, weight_init_std=0.01):
         filter_num = conv_param['filter_num']
