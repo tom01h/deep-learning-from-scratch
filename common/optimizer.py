@@ -128,3 +128,22 @@ class Adam:
             #unbias_m += (1 - self.beta1) * (grads[key] - self.m[key]) # correct bias
             #unbisa_b += (1 - self.beta2) * (grads[key]*grads[key] - self.v[key]) # correct bias
             #params[key] += self.lr * unbias_m / (np.sqrt(unbisa_b) + 1e-7)
+
+class EarlyStopping():
+    def __init__(self, patience=0, verbose=0):
+        self.step = 0
+        self.acc = 0.0
+        self.patience = patience
+        self.verbose = verbose
+
+    def validate(self, acc):
+        if self.acc > acc:
+            self.step += 1
+            if self.step > self.patience:
+                if self.verbose:
+                    print('early stopping')
+                return True
+        else:
+            self.step = 0
+            self.acc = acc
+        return False

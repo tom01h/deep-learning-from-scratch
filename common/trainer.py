@@ -10,7 +10,7 @@ class Trainer:
     def __init__(self, network, x_train, t_train, x_test, t_test,
                  epochs=20, mini_batch_size=100,
                  optimizer='SGD', optimizer_param={'lr':0.01}, 
-                 evaluate_sample_num_per_epoch=None, verbose=True):
+                 evaluate_sample_num_per_epoch=None, early_stopping=5, verbose=True):
         self.network = network
         self.verbose = verbose
         self.x_train = x_train
@@ -25,6 +25,7 @@ class Trainer:
         optimizer_class_dict = {'sgd':SGD, 'momentum':Momentum, 'nesterov':Nesterov,
                                 'adagrad':AdaGrad, 'rmsprpo':RMSprop, 'adam':Adam}
         self.optimizer = optimizer_class_dict[optimizer.lower()](**optimizer_param)
+        self.early_stopping = EarlyStopping(patience=early_stopping, verbose=self.verbose)
         
         self.train_size = x_train.shape[0]
         self.iter_per_epoch = max(self.train_size / mini_batch_size, 1)
@@ -37,6 +38,7 @@ class Trainer:
         self.test_acc_list = []
 
     def train_step(self):
+        early_stopping = False
         batch_mask = np.random.choice(self.train_size, self.batch_size)
         x_batch = self.x_train[batch_mask]
         t_batch = self.t_train[batch_mask]
@@ -46,7 +48,7 @@ class Trainer:
         
         loss = self.network.loss(x_batch, t_batch)
         self.train_loss_list.append(loss)
-        if self.verbose: print("train loss:" + str(loss))
+        if self.verbose: print(str(self.current_epoch) + " : " + str(int(self.current_iter % self.iter_per_epoch)) + " : train loss:" + str(loss))
         
         if self.current_iter % self.iter_per_epoch == 0:
             self.current_epoch += 1
@@ -62,13 +64,16 @@ class Trainer:
             test_acc = self.network.accuracy(x_test_sample, t_test_sample)
             self.train_acc_list.append(train_acc)
             self.test_acc_list.append(test_acc)
+            early_stopping = self.early_stopping.validate(test_acc)
 
             if self.verbose: print("=== epoch:" + str(self.current_epoch) + ", train acc:" + str(train_acc) + ", test acc:" + str(test_acc) + " ===")
         self.current_iter += 1
+        return early_stopping
 
     def train(self):
         for i in range(self.max_iter):
-            self.train_step()
+            if self.train_step():
+                break
 
         test_acc = self.network.accuracy(self.x_test, self.t_test)
 

@@ -10,9 +10,11 @@
   - データをまとめて ```$ cat cifar-10-batches-bin/data_batch_* > cifar10-train```
   - 圧縮 ```$ gzip cifar10-train```
   - test用のデータ(cifar10-test.gz)も同様にね
-3. 畳み込み層2層追加
+3. 畳み込み層2層追加 [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/620fd7e447cab43a32ff7777ae04941d20feca8a)
   - 畳み込み層のチャンネル数を32に全結合層のニューロン数を256に増やす
   - カーネルサイズは3に減らす
+4. EarlyStopping (詳解 ディープラーニングを参考) を追加
+  - ついでにデータ間引き方修正
 
 オリジナルのREADMEはここから↓
 

@@ -11,10 +11,14 @@ from common.trainer import Trainer
 (x_train, t_train), (x_test, t_test) = load_cifar10(flatten=False)
 
 # 処理に時間のかかる場合はデータを削減 
-x_train, t_train = x_train[:5000], t_train[:5000]
-x_test, t_test = x_test[:1000], t_test[:1000]
+train_mask = np.random.choice(x_train.shape[0], 5000)
+x_train = x_train[train_mask]
+t_train = t_train[train_mask]
+test_mask = np.random.choice(x_test.shape[0], 1000)
+x_test = x_test[test_mask]
+t_test = t_test[test_mask]
 
-max_epochs = 20
+max_epochs = 30
 
 network = SimpleConvNet(input_dim=(3,32,32),
                         conv_param = {'filter_num': (32, 32, 32), 'filter_size': 3, 'pad': 1, 'stride': 1},
@@ -23,7 +27,7 @@ network = SimpleConvNet(input_dim=(3,32,32),
 trainer = Trainer(network, x_train, t_train, x_test, t_test,
                   epochs=max_epochs, mini_batch_size=100,
                   optimizer='Adam', optimizer_param={'lr': 0.001},
-                  evaluate_sample_num_per_epoch=1000)
+                  evaluate_sample_num_per_epoch=1000, early_stopping=5)
 trainer.train()
 
 # パラメータの保存
@@ -32,7 +36,7 @@ print("Saved Network Parameters!")
 
 # グラフの描画
 markers = {'train': 'o', 'test': 's'}
-x = np.arange(max_epochs)
+x = np.arange(trainer.current_epoch)
 plt.plot(x, trainer.train_acc_list, marker='o', label='train', markevery=2)
 plt.plot(x, trainer.test_acc_list, marker='s', label='test', markevery=2)
 plt.xlabel("epochs")
