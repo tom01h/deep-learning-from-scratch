@@ -1,4 +1,6 @@
 # coding: utf-8
+import cupy as cp
+#import numpy as cp
 import numpy as np
 
 
@@ -55,8 +57,8 @@ def im2col(input_data, filter_h, filter_w, stride=1, pad=0):
     out_h = (H + 2*pad - filter_h)//stride + 1
     out_w = (W + 2*pad - filter_w)//stride + 1
 
-    img = np.pad(input_data, [(0,0), (0,0), (pad, pad), (pad, pad)], 'constant')
-    col = np.zeros((N, C, filter_h, filter_w, out_h, out_w))
+    img = cp.pad(input_data, [(0,0), (0,0), (pad, pad), (pad, pad)], 'constant')
+    col = cp.zeros((N, C, filter_h, filter_w, out_h, out_w), dtype=np.float32)
 
     for y in range(filter_h):
         y_max = y + stride*out_h
@@ -89,7 +91,7 @@ def col2im(col, input_shape, filter_h, filter_w, stride=1, pad=0):
     out_w = (W + 2*pad - filter_w)//stride + 1
     col = col.reshape(N, out_h, out_w, C, filter_h, filter_w).transpose(0, 3, 4, 5, 1, 2)
 
-    img = np.zeros((N, C, H + 2*pad + stride - 1, W + 2*pad + stride - 1))
+    img = cp.zeros((N, C, H + 2*pad + stride - 1, W + 2*pad + stride - 1), dtype=np.float32)
     for y in range(filter_h):
         y_max = y + stride*out_h
         for x in range(filter_w):
