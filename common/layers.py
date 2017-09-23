@@ -131,24 +131,26 @@ class LightNormalization:
 
     def forward(self, x, train_flg=True):
         self.input_shape = x.shape
-        if x.ndim != 2:
-            N, C, H, W = x.shape
-            x = x.reshape(N, -1)
+        if x.ndim == 2:
+            N, D = x.shape
+            x = x.reshape(N, D, 1, 1)
 
+        x = x.transpose(0, 2, 3, 1)
         out = self.__forward(x, train_flg)
+        out = out.transpose(0, 3, 1, 2)
 
         return out.reshape(*self.input_shape)
 
     def __forward(self, x, train_flg):
         if self.running_mean is None:
-            N, D = x.shape
-            self.running_mean = cp.zeros(D, dtype=np.float32)
-            self.running_var = cp.zeros(D, dtype=np.float32)
+            N, H, W, C = x.shape
+            self.running_mean = cp.zeros(C, dtype=np.float32)
+            self.running_var = cp.zeros(C, dtype=np.float32)
 
         if train_flg:
-            mu = x.mean(axis=(0))
+            mu = x.mean(axis=(0, 1, 2))
             xc = x - mu
-            var = cp.mean(xc**2, axis=0, dtype=np.float32)
+            var = cp.mean(xc**2, axis=(0, 1, 2), dtype=np.float32)
             std = cp.sqrt(var + 10e-7, dtype=np.float32)
             xn = xc / std
 
@@ -166,11 +168,13 @@ class LightNormalization:
         return out
 
     def backward(self, dout):
-        if dout.ndim != 2:
-            N, C, H, W = dout.shape
-            dout = dout.reshape(N, -1)
+        if dout.ndim == 2:
+            N, D = dout.shape
+            dout = dout.reshape(N, D, 1, 1)
 
+        dout = dout.transpose(0, 2, 3, 1)
         dx = self.__backward(dout)
+        dx = dx.transpose(0, 3, 1, 2)
 
         dx = dx.reshape(*self.input_shape)
         return dx

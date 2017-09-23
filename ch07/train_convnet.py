@@ -2,8 +2,6 @@
 import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import time
-#import cupy as cp
-import numpy as cp
 import numpy as np
 import matplotlib.pyplot as plt
 from dataset.cifar10 import load_cifar10

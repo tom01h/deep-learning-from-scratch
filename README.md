@@ -13,8 +13,22 @@
 3. 畳み込み層2層追加 [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/620fd7e447cab43a32ff7777ae04941d20feca8a)
   - 畳み込み層のチャンネル数を32に全結合層のニューロン数を256に増やす
   - カーネルサイズは3に減らす
-4. EarlyStopping (詳解 ディープラーニングを参考) を追加
+4. EarlyStopping (詳解 ディープラーニングを参考) を追加 [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/a2f6b278f93af53c0f6bb526bc43da2318348482)
   - ついでにデータ間引き方修正
+5. 3層の畳み込み層と2層の全結合層 [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/3a4c524466d36b618c64522ac3fceb3eef997a6f)
+  - ついでに CuPy 対応
+  - 畳み込み層
+    - カーネルサイズは 3×3
+    - パディングとストライドはどちらも 1
+    - チャンネル数は順に 32, 32, 64
+  - Pooling 層
+    - サイズ2、ストライド2 で層毎に縦横のサイズが半分になる
+  - BatchNormalization
+    - β と γ を固定した簡易版
+  - 全結合の隠れ層
+    - 512 ニューロン
+6. BatchNormalization(簡易版) を修正
+  - N の平均と分散 → N,H,W 全部の平均と分散
 
 オリジナルのREADMEはここから↓
 
