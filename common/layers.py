@@ -39,9 +39,45 @@ class Sigmoid:
         return dx
 
 
+class BinAffine:
+    def __init__(self, W):
+        self.W = W
+        self.bW = None
+#        self.b = b
+
+        self.x = None
+        self.original_x_shape = None
+        # 重み・バイアスパラメータの微分
+        self.dW = None
+#        self.db = None
+
+    def forward(self, x):
+        # テンソル対応
+        self.original_x_shape = x.shape
+        x = x.reshape(x.shape[0], -1)
+        self.x = x
+
+        alpha = cp.absolute(self.W).mean(0)
+        bW = cp.ones_like(self.W)
+        bW[self.W<0] = -1
+        self.bW = (bW*alpha).T
+
+        out = cp.dot(self.x, bW)*(alpha.T) #+ self.b
+
+        return out
+
+    def backward(self, dout):
+        dx = cp.dot(dout, self.bW)
+        self.dW = cp.dot(self.x.T, dout)
+#        self.db = cp.sum(dout, axis=0)
+
+        dx = dx.reshape(*self.original_x_shape)  # 入力データの形状に戻す（テンソル対応）
+        return dx
+
+
 class Affine:
     def __init__(self, W):
-        self.W =W
+        self.W = W
 #        self.b = b
         
         self.x = None
@@ -271,6 +307,57 @@ class BatchNormalization:
         self.dgamma = dgamma
         self.dbeta = dbeta
         
+        return dx
+
+
+class BinConvolution:
+    def __init__(self, W, stride=1, pad=0):
+        self.W = W
+#        self.b = b
+        self.stride = stride
+        self.pad = pad
+
+        # 中間データ（backward時に使用）
+        self.x = None
+        self.col = None
+        self.col_W = None
+
+        # 重み・バイアスパラメータの勾配
+        self.dW = None
+#        self.db = None
+
+    def forward(self, x):
+        FN, C, FH, FW = self.W.shape
+        N, C, H, W = x.shape
+        out_h = 1 + int((H + 2*self.pad - FH) / self.stride)
+        out_w = 1 + int((W + 2*self.pad - FW) / self.stride)
+
+        alpha = cp.absolute(self.W).mean(axis=(1,2,3))
+        col = im2col(x, FH, FW, self.stride, self.pad)
+        col_W = self.W.reshape(FN, -1).T
+        col_Wb = cp.ones_like(col_W)
+        col_Wb[col_W<0] = -1
+
+        out = cp.dot(col, col_Wb)*alpha #+ self.b
+        out = out.reshape(N, out_h, out_w, -1).transpose(0, 3, 1, 2)
+
+        self.x = x
+        self.col = col
+        self.col_W = col_Wb*alpha
+
+        return out
+
+    def backward(self, dout):
+        FN, C, FH, FW = self.W.shape
+        dout = dout.transpose(0,2,3,1).reshape(-1, FN)
+
+#        self.db = cp.sum(dout, axis=0)
+        self.dW = cp.dot(self.col.T, dout)
+        self.dW = self.dW.transpose(1, 0).reshape(FN, C, FH, FW)
+
+        dcol = cp.dot(dout, self.col_W.T)
+        dx = col2im(dcol, self.x.shape, FH, FW, self.stride, self.pad)
+
         return dx
 
 

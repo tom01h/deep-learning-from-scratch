@@ -52,19 +52,19 @@ class SimpleConvNet:
         self.layers['Relu1'] = Relu()
         self.layers['Pool1'] = Pooling(pool_h=2, pool_w=2, stride=2)
 
-        self.layers['Conv2'] = Convolution(self.params['W2'],
+        self.layers['Conv2'] = BinConvolution(self.params['W2'],
                                            conv_param['stride'], conv_param['pad'])
         self.layers['LightNorm2'] = LightNormalization()
         self.layers['Relu2'] = Relu()
         self.layers['Pool2'] = Pooling(pool_h=2, pool_w=2, stride=2)
 
-        self.layers['Conv3'] = Convolution(self.params['W3'],
+        self.layers['Conv3'] = BinConvolution(self.params['W3'],
                                            conv_param['stride'], conv_param['pad'])
         self.layers['LightNorm3'] = LightNormalization()
         self.layers['Relu3'] = Relu()
         self.layers['Pool3'] = Pooling(pool_h=2, pool_w=2, stride=2)
 
-        self.layers['Affine4'] = Affine(self.params['W4'])
+        self.layers['Affine4'] = BinAffine(self.params['W4'])
         self.layers['LightNorm4'] = LightNormalization()
         self.layers['Relu4'] = Relu()
 

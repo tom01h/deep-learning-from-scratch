@@ -27,8 +27,13 @@
     - β と γ を固定した簡易版
   - 全結合の隠れ層
     - 512 ニューロン
-6. BatchNormalization(簡易版) を修正
+6. BatchNormalization(簡易版) を修正[(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/5061fff7236a5e19d3ab4e71fe5c1d25115b2baf)
   - N の平均と分散 → N,H,W 全部の平均と分散
+
+7. Binary Weight Network
+  - [XNOR-Net の論文](https://arxiv.org/abs/1603.05279) に従い、まずはウェイトだけを2値{-1,1}化する Binary Weight Network を実装
+  - 1層目と出力層は2値化しない
+  - 値だけ2値化していてデータ型は2値化していないので速くはならない
 
 オリジナルのREADMEはここから↓
 
