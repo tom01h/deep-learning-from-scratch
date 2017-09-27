@@ -117,6 +117,8 @@ class Adam:
                 self.v[key] = cp.zeros_like(val, dtype=np.float32)
         
         self.iter += 1
+        if self.iter % 5000 == 0:
+            self.lr *= 0.1
         lr_t  = self.lr * cp.sqrt(1.0 - self.beta2**self.iter, dtype=np.float32) / (1.0 - self.beta1**self.iter)
         
         for key in params.keys():

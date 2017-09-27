@@ -5,6 +5,24 @@ import numpy as np
 from common.functions import *
 from common.util import im2col, col2im
 
+class BinActiv:
+    def __init__(self):
+        self.mask = None
+        self.running_norm = None
+
+    def forward(self, x):
+        self.mask = (cp.absolute(x) > 1)
+        out = cp.ones_like(x, dtype=np.float32)
+        out[x < 0] = -1
+
+        return out
+
+    def backward(self, dout):
+        dout[self.mask] = 0
+        dx = dout
+
+        return dx
+
 
 class Relu:
     def __init__(self):
@@ -57,12 +75,11 @@ class BinAffine:
         x = x.reshape(x.shape[0], -1)
         self.x = x
 
-        alpha = cp.absolute(self.W).mean(0)
         bW = cp.ones_like(self.W)
         bW[self.W<0] = -1
-        self.bW = (bW*alpha).T
+        self.bW = (bW).T
 
-        out = cp.dot(self.x, bW)*(alpha.T) #+ self.b
+        out = cp.dot(self.x, bW) #+ self.b
 
         return out
 
@@ -332,18 +349,17 @@ class BinConvolution:
         out_h = 1 + int((H + 2*self.pad - FH) / self.stride)
         out_w = 1 + int((W + 2*self.pad - FW) / self.stride)
 
-        alpha = cp.absolute(self.W).mean(axis=(1,2,3))
         col = im2col(x, FH, FW, self.stride, self.pad)
         col_W = self.W.reshape(FN, -1).T
         col_Wb = cp.ones_like(col_W)
         col_Wb[col_W<0] = -1
 
-        out = cp.dot(col, col_Wb)*alpha #+ self.b
+        out = cp.dot(col, col_Wb) #+ self.b
         out = out.reshape(N, out_h, out_w, -1).transpose(0, 3, 1, 2)
 
         self.x = x
         self.col = col
-        self.col_W = col_Wb*alpha
+        self.col_W = col_Wb
 
         return out
 

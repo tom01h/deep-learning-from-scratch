@@ -27,13 +27,21 @@
     - β と γ を固定した簡易版
   - 全結合の隠れ層
     - 512 ニューロン
-6. BatchNormalization(簡易版) を修正[(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/5061fff7236a5e19d3ab4e71fe5c1d25115b2baf)
+6. BatchNormalization(簡易版) を修正 [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/5061fff7236a5e19d3ab4e71fe5c1d25115b2baf)
   - N の平均と分散 → N,H,W 全部の平均と分散
 
-7. Binary Weight Network
+7. Binary Weight Network [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/ec874e28cba8d98cb9301105eb8ed4f561ebb758)
+
   - [XNOR-Net の論文](https://arxiv.org/abs/1603.05279) に従い、まずはウェイトだけを2値{-1,1}化する Binary Weight Network を実装
   - 1層目と出力層は2値化しない
   - 値だけ2値化していてデータ型は2値化していないので速くはならない
+
+8. Binary Neural Network
+  - [BNN の論文](https://arxiv.org/abs/1602.02830) に従い、 Binary Neural Network を実装
+  - deterministic な 2値化を実装
+  - shift based xxx は実装していない
+  - ついでに、テスト時の Batch Naormalization に train_flg=False のつけ忘れを修正
+  - ついでに 10 エポック毎に学習率を 1/10 にする機能を追加
 
 オリジナルのREADMEはここから↓
 

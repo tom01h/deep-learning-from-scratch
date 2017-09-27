@@ -48,41 +48,44 @@ class SimpleConvNet:
         self.layers = OrderedDict()
         self.layers['Conv1'] = Convolution(self.params['W1'],
                                            conv_param['stride'], conv_param['pad'])
-        self.layers['LightNorm1'] = LightNormalization()
-        self.layers['Relu1'] = Relu()
         self.layers['Pool1'] = Pooling(pool_h=2, pool_w=2, stride=2)
+        self.layers['LightNorm1'] = LightNormalization()
+        self.layers['Activ1'] = BinActiv()
 
         self.layers['Conv2'] = BinConvolution(self.params['W2'],
                                            conv_param['stride'], conv_param['pad'])
-        self.layers['LightNorm2'] = LightNormalization()
-        self.layers['Relu2'] = Relu()
         self.layers['Pool2'] = Pooling(pool_h=2, pool_w=2, stride=2)
+        self.layers['LightNorm2'] = LightNormalization()
+        self.layers['Activ2'] = BinActiv()
 
         self.layers['Conv3'] = BinConvolution(self.params['W3'],
                                            conv_param['stride'], conv_param['pad'])
-        self.layers['LightNorm3'] = LightNormalization()
-        self.layers['Relu3'] = Relu()
         self.layers['Pool3'] = Pooling(pool_h=2, pool_w=2, stride=2)
+        self.layers['LightNorm3'] = LightNormalization()
+        self.layers['Activ3'] = BinActiv()
 
         self.layers['Affine4'] = BinAffine(self.params['W4'])
         self.layers['LightNorm4'] = LightNormalization()
-        self.layers['Relu4'] = Relu()
+        self.layers['Activ4'] = BinActiv()
 
         self.layers['Affine5'] = Affine(self.params['W5'])
 
         self.last_layer = SoftmaxWithLoss()
 
-    def predict(self, x):
-        for layer in self.layers.values():
-            x = layer.forward(x)
+    def predict(self, x, train_flg=False):
+        for key, layer in self.layers.items():
+            if "LightNorm" in key:
+                x = layer.forward(x, train_flg)
+            else:
+                x = layer.forward(x)
 
         return x
 
-    def loss(self, x, t):
+    def loss(self, x, t, train_flg=False):
         """損失関数を求める
         引数のxは入力データ、tは教師ラベル
         """
-        y = self.predict(x)
+        y = self.predict(x, train_flg)
         return self.last_layer.forward(y, t)
 
     def accuracy(self, x, t, batch_size=100):
@@ -93,7 +96,7 @@ class SimpleConvNet:
         for i in range(int(x.shape[0] / batch_size)):
             tx = x[i*batch_size:(i+1)*batch_size]
             tt = t[i*batch_size:(i+1)*batch_size]
-            y = self.predict(tx)
+            y = self.predict(tx, train_flg=False)
             y = np.argmax(y, axis=1)
             acc += np.sum(y.get() == tt) #cupy
 #            acc += np.sum(y == tt) #numpy
@@ -115,7 +118,7 @@ class SimpleConvNet:
             grads['b1']、grads['b2']、...は各層のバイアス
         """
         # forward
-        self.loss(x, t)
+        self.loss(x, t, train_flg=True)
 
         # backward
         dout = 1
