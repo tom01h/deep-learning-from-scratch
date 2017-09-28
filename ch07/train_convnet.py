@@ -2,6 +2,8 @@
 import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import time
+import cupy as cp
+#import numpy as cp
 import numpy as np
 import matplotlib.pyplot as plt
 from dataset.cifar10 import load_cifar10
@@ -19,7 +21,7 @@ test_mask = np.random.choice(x_test.shape[0], 1000)
 x_test = x_test[test_mask]
 t_test = t_test[test_mask]
 
-max_epochs = 30
+max_epochs = 25
 
 network = SimpleConvNet(input_dim=(3,32,32),
                         conv_param = {'filter_num': (32, 32, 64), 'filter_size': 3, 'pad': 1, 'stride': 1},
@@ -28,7 +30,7 @@ network = SimpleConvNet(input_dim=(3,32,32),
 trainer = Trainer(network, x_train, t_train, x_test, t_test,
                   epochs=max_epochs, mini_batch_size=100,
                   optimizer='Adam', optimizer_param={'lr': 0.001},
-                  evaluate_sample_num_per_epoch=1000, early_stopping=5)
+                  evaluate_sample_num_per_epoch=1000, early_stopping=10)
 start = time.time()
 trainer.train()
 elapsed_time = time.time() - start
@@ -48,3 +50,6 @@ plt.ylabel("accuracy")
 plt.ylim(0, 1.0)
 plt.legend(loc='lower right')
 plt.show()
+
+np.set_printoptions(threshold=50)
+print(np.round(trainer.test_acc_list,3))

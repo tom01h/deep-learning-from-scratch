@@ -31,17 +31,22 @@
   - N の平均と分散 → N,H,W 全部の平均と分散
 
 7. Binary Weight Network [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/ec874e28cba8d98cb9301105eb8ed4f561ebb758)
-
   - [XNOR-Net の論文](https://arxiv.org/abs/1603.05279) に従い、まずはウェイトだけを2値{-1,1}化する Binary Weight Network を実装
   - 1層目と出力層は2値化しない
   - 値だけ2値化していてデータ型は2値化していないので速くはならない
 
-8. Binary Neural Network
+8. Binary Neural Network [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/7915d08dd088de194e91ae7bdfc6595941ae3c3b)
   - [BNN の論文](https://arxiv.org/abs/1602.02830) に従い、 Binary Neural Network を実装
   - deterministic な 2値化を実装
   - shift based xxx は実装していない
   - ついでに、テスト時の Batch Naormalization に train_flg=False のつけ忘れを修正
   - ついでに 10 エポック毎に学習率を 1/10 にする機能を追加
+
+9. Ternary Activation
+  - 入力が -1/2より小さいときは -1、1/2 以上の時は 1、その間の時は 0 となる Ternary Activation を実装
+  - Binary Weight と組み合わせる
+  - ついでに 25エポックに固定
+  - ついでに cupy の範囲ちょっと拡大
 
 オリジナルのREADMEはここから↓
 

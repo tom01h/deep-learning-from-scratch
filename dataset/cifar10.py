@@ -7,6 +7,8 @@ import os.path
 import gzip
 import pickle
 import os
+import cupy as cp
+#import numpy as cp
 import numpy as np
 
 
@@ -28,7 +30,7 @@ def _load_label(file_name):
 
     print("Converting " + file_name + " to NumPy Array ...")
     with gzip.open(file_path, 'rb') as f:
-            labels = np.frombuffer(f.read(), np.uint8, offset=0)
+            labels = cp.frombuffer(f.read(), np.uint8, offset=0)
     labels = labels.reshape(-1, img_size+1)
     labels = labels.T
     print("Done")
@@ -40,9 +42,9 @@ def _load_img(file_name):
 
     print("Converting " + file_name + " to NumPy Array ...")
     with gzip.open(file_path, 'rb') as f:
-            data = np.frombuffer(f.read(), np.uint8, offset=0)
+            data = cp.frombuffer(f.read(), np.uint8, offset=0)
     data = data.reshape(-1, img_size+1)
-    data = np.delete(data, 0, 1)
+    data = cp.delete(data, 0, 1)
     print("Done")
 
     return data

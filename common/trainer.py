@@ -1,7 +1,8 @@
 # coding: utf-8
 import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
-import numpy as np
+import cupy as cp
+#import numpy as cpimport numpy as np
 from common.optimizer import *
 
 class Trainer:

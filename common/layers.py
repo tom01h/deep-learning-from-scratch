@@ -8,12 +8,30 @@ from common.util import im2col, col2im
 class BinActiv:
     def __init__(self):
         self.mask = None
-        self.running_norm = None
 
     def forward(self, x):
         self.mask = (cp.absolute(x) > 1)
         out = cp.ones_like(x, dtype=np.float32)
         out[x < 0] = -1
+
+        return out
+
+    def backward(self, dout):
+        dout[self.mask] = 0
+        dx = dout
+
+        return dx
+
+
+class TriActiv:
+    def __init__(self):
+        self.mask = None
+
+    def forward(self, x):
+        self.mask = (cp.absolute(x) > 1)
+        out = cp.ones_like(x, dtype=np.float32)
+        out[x <  0.5] =  0
+        out[x < -0.5] = -1
 
         return out
 
