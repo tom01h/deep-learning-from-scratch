@@ -7,7 +7,6 @@ import cupy as cp
 import numpy as np
 from collections import OrderedDict
 from common.layers import *
-from common.gradient import numerical_gradient
 
 
 class SimpleConvNet:
@@ -115,7 +114,6 @@ class SimpleConvNet:
         -------
         各層の勾配を持ったディクショナリ変数
             grads['W1']、grads['W2']、...は各層の重み
-            grads['b1']、grads['b2']、...は各層のバイアス
         """
         # forward
         self.loss(x, t, train_flg=True)
@@ -142,5 +140,20 @@ class SimpleConvNet:
         params = {}
         for key, val in self.params.items():
             params[key] = val
+        for i, key in enumerate(['LightNorm1', 'LightNorm2', 'LightNorm3', 'LightNorm4']):
+            params['mean' + str(i+1)] = self.layers[key].running_mean
+            params['var' + str(i+1)] = self.layers[key].running_var
         with open(file_name, 'wb') as f:
             pickle.dump(params, f)
+
+    def load_params(self, file_name="params.pkl"):
+        with open(file_name, 'rb') as f:
+            params = pickle.load(f)
+        for key, val in params.items():
+            if "W" in key:
+                self.params[key] = val
+        for i, key in enumerate(['Conv1', 'Conv2', 'Conv3', 'Affine4', 'Affine5']):
+            self.layers[key].W = self.params['W' + str(i+1)]
+        for i, key in enumerate(['LightNorm1', 'LightNorm2', 'LightNorm3', 'LightNorm4']):
+            self.layers[key].running_var = params['var' + str(i+1)]
+            self.layers[key].running_mean= params['mean' + str(i+1)]

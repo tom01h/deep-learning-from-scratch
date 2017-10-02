@@ -2,7 +2,8 @@
 import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import cupy as cp
-#import numpy as cpimport numpy as np
+#import numpy as cp
+import numpy as np
 from common.optimizer import *
 
 class Trainer:
