@@ -346,11 +346,12 @@ class BatchNormalization:
 
 
 class BinConvolution:
-    def __init__(self, W, stride=1, pad=0):
+    def __init__(self, W, stride=1, pad=0, fill=0):
         self.W = W
 #        self.b = b
         self.stride = stride
         self.pad = pad
+        self.fill = fill
 
         # 中間データ（backward時に使用）
         self.x = None
@@ -367,7 +368,7 @@ class BinConvolution:
         out_h = 1 + int((H + 2*self.pad - FH) / self.stride)
         out_w = 1 + int((W + 2*self.pad - FW) / self.stride)
 
-        col = im2col(x, FH, FW, self.stride, self.pad)
+        col = im2col(x, FH, FW, self.stride, self.pad, self.fill)
         col_W = self.W.reshape(FN, -1).T
         col_Wb = cp.ones_like(col_W)
         col_Wb[col_W<0] = -1

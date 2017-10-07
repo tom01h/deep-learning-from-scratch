@@ -42,11 +42,17 @@
   - ついでに、テスト時の Batch Naormalization に train_flg=False のつけ忘れを修正
   - ついでに 10 エポック毎に学習率を 1/10 にする機能を追加
 
-9. Ternary Activation
+9. Ternary Activation [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/d1e9f785aed2942fdb49fd2a8e09de7fac3775af)
   - 入力が -1/2より小さいときは -1、1/2 以上の時は 1、その間の時は 0 となる Ternary Activation を実装
   - Binary Weight と組み合わせる
   - ついでに 25エポックに固定
   - ついでに cupy の範囲ちょっと拡大
+
+10. パラメタ保存環境
+  - [ここ](https://github.com/tom01h/estimate-cnn)で推論環境構築中
+  - そのためのパラメタ保存環境
+  - ついでに、バイナリアクティベーション時のパディングで0を使っているのを修正
+  - ついでに、デフォルト環境をBNNにもどす
 
 オリジナルのREADMEはここから↓
 

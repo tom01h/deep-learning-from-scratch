@@ -38,7 +38,7 @@ def conv_output_size(input_size, filter_size, stride=1, pad=0):
     return (input_size + 2*pad - filter_size) / stride + 1
 
 
-def im2col(input_data, filter_h, filter_w, stride=1, pad=0):
+def im2col(input_data, filter_h, filter_w, stride=1, pad=0, fill=0):
     """
 
     Parameters
@@ -48,6 +48,7 @@ def im2col(input_data, filter_h, filter_w, stride=1, pad=0):
     filter_w : フィルターの幅
     stride : ストライド
     pad : パディング
+    fill : パディングを埋める値
 
     Returns
     -------
@@ -57,7 +58,7 @@ def im2col(input_data, filter_h, filter_w, stride=1, pad=0):
     out_h = (H + 2*pad - filter_h)//stride + 1
     out_w = (W + 2*pad - filter_w)//stride + 1
 
-    img = cp.pad(input_data, [(0,0), (0,0), (pad, pad), (pad, pad)], 'constant')
+    img = cp.pad(input_data, [(0,0), (0,0), (pad, pad), (pad, pad)], 'constant', constant_values=(fill, fill))
     col = cp.zeros((N, C, filter_h, filter_w, out_h, out_w), dtype=np.float32)
 
     for y in range(filter_h):
