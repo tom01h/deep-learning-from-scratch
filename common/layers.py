@@ -42,6 +42,26 @@ class TriActiv:
         return dx
 
 
+class QuaActiv:
+    def __init__(self):
+        self.mask = None
+
+    def forward(self, x):
+        self.mask = (cp.absolute(x) > 1)
+        out = cp.ones_like(x, dtype=np.float32)
+        out[x <  0.5] =  1/3
+        out[x <  0.0] = -1/3
+        out[x < -0.5] = -1
+
+        return out
+
+    def backward(self, dout):
+        dout[self.mask] = 0
+        dx = dout
+
+        return dx
+
+
 class Relu:
     def __init__(self):
         self.mask = None
@@ -418,7 +438,7 @@ class Convolution:
         out_h = 1 + int((H + 2*self.pad - FH) / self.stride)
         out_w = 1 + int((W + 2*self.pad - FW) / self.stride)
 
-        col = im2col(x, FH, FW, self.stride, self.pad)
+        col = im2col(x, FH, FW, self.stride, self.pad, -255)
         col_W = self.W.reshape(FN, -1).T
 
         out = cp.dot(col, col_W) #+ self.b

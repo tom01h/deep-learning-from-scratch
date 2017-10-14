@@ -45,27 +45,27 @@ class SimpleConvNet:
 
         # レイヤの生成
         self.layers = OrderedDict()
-        self.layers['Conv1'] = Convolution(self.params['W1'],
-                                           conv_param['stride'], conv_param['pad'])
+        self.layers['Conv1'] = Convolution(self.params['W1'], conv_param['stride'],
+                                           conv_param['pad'])
         self.layers['Pool1'] = Pooling(pool_h=2, pool_w=2, stride=2)
         self.layers['LightNorm1'] = LightNormalization()
-        self.layers['Activ1'] = BinActiv()
+        self.layers['Activ1'] = QuaActiv()
 
-        self.layers['Conv2'] = BinConvolution(self.params['W2'],
-                                           conv_param['stride'], conv_param['pad'], 1) # Bin<=１ , Tri<=0
+        self.layers['Conv2'] = BinConvolution(self.params['W2'], conv_param['stride'],
+                                           conv_param['pad'], 1/3) # BinActiv<=1 , QuaActiv<=1/3 , other<=0
         self.layers['Pool2'] = Pooling(pool_h=2, pool_w=2, stride=2)
         self.layers['LightNorm2'] = LightNormalization()
-        self.layers['Activ2'] = BinActiv()
+        self.layers['Activ2'] = QuaActiv()
 
-        self.layers['Conv3'] = BinConvolution(self.params['W3'],
-                                           conv_param['stride'], conv_param['pad'], 1) # Bin<=1 , Tri<=0
+        self.layers['Conv3'] = BinConvolution(self.params['W3'], conv_param['stride'],
+                                           conv_param['pad'], 1/3) # BinActiv<=1 , QuaActiv<=1/3 , other<=0
         self.layers['Pool3'] = Pooling(pool_h=2, pool_w=2, stride=2)
         self.layers['LightNorm3'] = LightNormalization()
-        self.layers['Activ3'] = BinActiv()
+        self.layers['Activ3'] = QuaActiv()
 
         self.layers['Affine4'] = BinAffine(self.params['W4'])
         self.layers['LightNorm4'] = LightNormalization()
-        self.layers['Activ4'] = BinActiv()
+        self.layers['Activ4'] = QuaActiv()
 
         self.layers['Affine5'] = Affine(self.params['W5'])
 

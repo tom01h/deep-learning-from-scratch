@@ -11,15 +11,15 @@ from simple_convnet import SimpleConvNet
 from common.trainer import Trainer
 
 # データの読み込み
-(x_train, t_train), (x_test, t_test) = load_cifar10(flatten=False)
+(x_train, t_train), (x_test, t_test) = load_cifar10(normalize=False, flatten=False)
+
+x_train = x_train * 2.0 - 255
+x_test = x_test * 2.0 - 255
 
 # 処理に時間のかかる場合はデータを削減 
 #train_mask = np.random.choice(x_train.shape[0], 5000)
 #x_train = x_train[train_mask]
 #t_train = t_train[train_mask]
-test_mask = np.random.choice(x_test.shape[0], 1000)
-x_test = x_test[test_mask]
-t_test = t_test[test_mask]
 
 max_epochs = 25
 
