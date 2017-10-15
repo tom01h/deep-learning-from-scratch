@@ -48,11 +48,14 @@
   - ついでに 25エポックに固定
   - ついでに cupy の範囲ちょっと拡大
 
-10. パラメタ保存環境
+10. パラメタ保存環境 [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/735dca1c010c5759e73ace8518677bd2d5fc0c3a)
   - [ここ](https://github.com/tom01h/estimate-cnn)で推論環境構築中
   - そのためのパラメタ保存環境
   - ついでに、バイナリアクティベーション時のパディングで0を使っているのを修正
   - ついでに、デフォルト環境をBNNにもどす
+
+11. Quaternary Activation [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/9ac20e4c49918700ee4d8c1904b7385705a6b50b)
+  - ついでに入力データを -255~255に奇数に変更
 
 オリジナルのREADMEはここから↓
 
