@@ -57,6 +57,11 @@
 11. Quaternary Activation [(このバージョンを見る)](https://github.com/tom01h/deep-learning-from-scratch/tree/9ac20e4c49918700ee4d8c1904b7385705a6b50b)
   - ついでに入力データを -255~255に奇数に変更
 
+12. 蒸留
+  - 蒸留教師ラベルファイル(ttarray.pkl)があれば、教師データを差し替えて学習する
+  - 蒸留用の教師ラベル作成は ```$ make_distillation.py```
+  - ついでに、パラメータを numpy に変換してから保存
+
 オリジナルのREADMEはここから↓
 
 ---

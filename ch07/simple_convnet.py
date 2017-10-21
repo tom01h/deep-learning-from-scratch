@@ -88,7 +88,7 @@ class SimpleConvNet:
         return self.last_layer.forward(y, t)
 
     def accuracy(self, x, t, batch_size=100):
-        if t.ndim != 1 : t = np.argmax(t, axis=1)
+        if t.ndim != 1 : t = cp.argmax(t, axis=1)
         
         acc = 0.0
         
@@ -96,9 +96,9 @@ class SimpleConvNet:
             tx = x[i*batch_size:(i+1)*batch_size]
             tt = t[i*batch_size:(i+1)*batch_size]
             y = self.predict(tx, train_flg=False)
-            y = np.argmax(y, axis=1)
-            acc += np.sum(y.get() == tt) #cupy
-#            acc += np.sum(y == tt) #numpy
+            y = cp.argmax(y, axis=1)
+            acc += cp.sum(y == tt).get() #cupy
+#            acc += cp.sum(y == tt) #numpy
         
         return acc / x.shape[0]
 
@@ -139,10 +139,10 @@ class SimpleConvNet:
     def save_params(self, file_name="params.pkl"):
         params = {}
         for key, val in self.params.items():
-            params[key] = val
+            params[key] = val.get()
         for i, key in enumerate(['LightNorm1', 'LightNorm2', 'LightNorm3', 'LightNorm4']):
-            params['mean' + str(i+1)] = self.layers[key].running_mean
-            params['var' + str(i+1)] = self.layers[key].running_var
+            params['mean' + str(i+1)] = self.layers[key].running_mean.get()
+            params['var' + str(i+1)] = self.layers[key].running_var.get()
         with open(file_name, 'wb') as f:
             pickle.dump(params, f)
 
@@ -153,7 +153,7 @@ class SimpleConvNet:
             if "W" in key:
                 self.params[key] = val
         for i, key in enumerate(['Conv1', 'Conv2', 'Conv3', 'Affine4', 'Affine5']):
-            self.layers[key].W = self.params['W' + str(i+1)]
+            self.layers[key].W = cp.array(self.params['W' + str(i+1)])
         for i, key in enumerate(['LightNorm1', 'LightNorm2', 'LightNorm3', 'LightNorm4']):
-            self.layers[key].running_var = params['var' + str(i+1)]
-            self.layers[key].running_mean= params['mean' + str(i+1)]
+            self.layers[key].running_var = cp.array(params['var' + str(i+1)])
+            self.layers[key].running_mean= cp.array(params['mean' + str(i+1)])

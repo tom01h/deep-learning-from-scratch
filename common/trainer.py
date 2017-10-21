@@ -42,8 +42,8 @@ class Trainer:
     def train_step(self):
         early_stopping = False
         batch_mask = np.random.choice(self.train_size, self.batch_size)
-        x_batch = self.x_train[batch_mask]
-        t_batch = self.t_train[batch_mask]
+        x_batch = cp.array(self.x_train[batch_mask])
+        t_batch = cp.array(self.t_train[batch_mask])
         
         grads = self.network.gradient(x_batch, t_batch)
         self.optimizer.update(self.network.params, grads)
@@ -55,12 +55,17 @@ class Trainer:
         if self.current_iter % self.iter_per_epoch == 0:
             self.current_epoch += 1
             
-            x_train_sample, t_train_sample = self.x_train, self.t_train
-            x_test_sample, t_test_sample = self.x_test, self.t_test
-            if not self.evaluate_sample_num_per_epoch is None:
+            if self.evaluate_sample_num_per_epoch is None:
+                x_train_sample = cp.array(self.x_train)
+                t_train_sample = cp.array(self.t_train)
+                x_test_sample = cp.array(self.x_test)
+                t_test_sample = cp.array(self.t_test)
+            else:
                 t = self.evaluate_sample_num_per_epoch
-                x_train_sample, t_train_sample = self.x_train[:t], self.t_train[:t]
-                x_test_sample, t_test_sample = self.x_test[:t], self.t_test[:t]
+                x_train_sample = cp.array(self.x_train[:t])
+                t_train_sample = cp.array(self.t_train[:t])
+                x_test_sample = cp.array(self.x_test[:t])
+                t_test_sample = cp.array(self.t_test[:t])
                 
             train_acc = self.network.accuracy(x_train_sample, t_train_sample)
             test_acc = self.network.accuracy(x_test_sample, t_test_sample)
@@ -77,7 +82,7 @@ class Trainer:
             if self.train_step():
                 break
 
-        test_acc = self.network.accuracy(self.x_test, self.t_test)
+        test_acc = self.network.accuracy(cp.array(self.x_test), cp.array(self.t_test))
 
         if self.verbose:
             print("=============== Final Test Accuracy ===============")

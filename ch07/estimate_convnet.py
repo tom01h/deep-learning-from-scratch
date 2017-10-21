@@ -9,7 +9,7 @@ from dataset.cifar10 import load_cifar10
 from simple_convnet import SimpleConvNet
 
 # データの読み込み
-(x_train, t_train), (x_test, t_test) = load_cifar10(normalize=False, flatten=False)
+(x_train, t_train), (x_test, t_test) = load_cifar10(normalize=False, flatten=False, one_hot_label=True)
 
 x_train = x_train * 2.0 - 255
 x_test = x_test * 2.0 - 255
@@ -21,6 +21,8 @@ x_test = x_test * 2.0 - 255
 #test_mask = np.random.choice(x_test.shape[0], 1000)
 x_test = x_test[:1000]
 t_test = t_test[:1000]
+
+t_test =cp.array(t_test, np.float32)
 
 network = SimpleConvNet(input_dim=(3,32,32),
                         conv_param = {'filter_num': (32, 32, 64), 'filter_size': 3, 'pad': 1, 'stride': 1},
@@ -36,8 +38,10 @@ elapsed_time = time.time() - start
 print ("=== " + "test acc:" + str(test_acc) + " ===")
 print ("elapsed_time:{0}".format(elapsed_time) + "[sec]")
 
+#network.save_params("params.pkl")
+#print("Saved Network Parameters!")
 
-np.savetxt('W1.h', network.params['W1'].get().reshape(32,-1), delimiter=',', newline=',\n', header='float W1[32][27]={', footer='};', comments='')
+np.savetxt('W1.h', network.params['W1'].reshape(32,-1), delimiter=',', newline=',\n', header='float W1[32][27]={', footer='};', comments='')
 np.savetxt('mean1.h', network.layers['LightNorm1'].running_mean.get(), newline=',\n', header='float mean1[32]={', footer='};', comments='')
 np.savetxt('var1.h', network.layers['LightNorm1'].running_var.get(), newline=',\n', header='float var1[32]={', footer='};', comments='')
 np.savetxt('W2.h', network.layers['Conv2'].col_W.get().T.astype(np.int), fmt='%d', delimiter=',', newline=',\n', header='int W2[32][32*9]={', footer='};', comments='')
@@ -49,6 +53,6 @@ np.savetxt('var3.h', network.layers['LightNorm3'].running_var.get(), newline=',\
 np.savetxt('W4.h', network.layers['Affine4'].bW.get(), fmt='%d', delimiter=',', newline=',\n', header='int W4[512][1024]={', footer='};', comments='')
 np.savetxt('mean4.h', network.layers['LightNorm4'].running_mean.get(), newline=',\n', header='float mean4[512]={', footer='};', comments='')
 np.savetxt('var4.h', network.layers['LightNorm4'].running_var.get(), newline=',\n', header='float var4[512]={', footer='};', comments='')
-np.savetxt('W5.h', network.params['W5'].get().T, delimiter=',', newline=',\n', header='float W5[10][512]={', footer='};', comments='')
+np.savetxt('W5.h', network.params['W5'].T, delimiter=',', newline=',\n', header='float W5[10][512]={', footer='};', comments='')
 
 #np.set_printoptions(threshold=50)
